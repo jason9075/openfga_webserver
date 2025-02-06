@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  app:
+    build: ./app
+    container_name: echo-server
+    ports:
+      - "${WEB_APP_PORT}:${WEB_APP_PORT}"
+    environment:
+      - OPENFGA_API_URL=${OPENFGA_API_URL}
+    depends_on:
+      openfga:
+        condition: service_healthy
+    networks:
+      - app-network
+  openfga:
+    image: openfga/openfga:latest
+    container_name: openfga
+    user: nonroot
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+      - "3000:3000"
+    command: run --playground-enabled
+    environment:
+      - OPENFGA_DATASTORE_ENGINE=memory
+      - OPENFGA_LOG_LEVEL=debug
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/stores"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
