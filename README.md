@@ -1,6 +1,6 @@
 # OpenFGA Web Server
 
-openfga_webserver is a Golang-based web server that integrates with OpenFGA to provide fine-grained access control. The project uses Docker Compose to launch both the web server and OpenFGA simultaneously, with the Playground feature enabled for convenient development and testing.
+openfga_webserver is a Golang-based web server that integrates with (OpenFGA)[https://openfga.dev/] to provide fine-grained access control. The project uses Docker Compose to launch both the web server and OpenFGA simultaneously, with the Playground feature enabled for convenient development and testing.
 
 ## Project Features
 
