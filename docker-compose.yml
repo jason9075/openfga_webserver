@@ -1,15 +1,21 @@
 version: "3.8"
 services:
   app:
-    build: ./app
-    container_name: echo-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web-server
     ports:
       - "${WEB_APP_PORT}:${WEB_APP_PORT}"
     environment:
-      - OPENFGA_API_URL=${OPENFGA_API_URL}
+      - OPENFGA_API_URL=http://openfga:${OPENFGA_API_PORT}
     depends_on:
-      openfga:
-        condition: service_healthy
+      - openfga
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${WEB_APP_PORT}/health"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
     networks:
       - app-network
   openfga:
@@ -17,18 +23,14 @@ services:
     container_name: openfga
     user: nonroot
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "${OPENFGA_API_PORT}:8080"
+      - "${OPENFGA_GRPC_PORT}:8081"
       - "3000:3000"
-    command: run --playground-enabled
+    # you can check playground in http://localhost:3000/playground
+    command: run --playground-enabled --playground-port 3000
     environment:
       - OPENFGA_DATASTORE_ENGINE=memory
       - OPENFGA_LOG_LEVEL=debug
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/stores"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
     networks:
       - app-network
 networks:

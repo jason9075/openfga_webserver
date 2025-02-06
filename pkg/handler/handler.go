@@ -17,3 +17,7 @@ func PageHandler(c echo.Context) error {
 	role := c.QueryParam("access")
 	return c.String(http.StatusOK, fmt.Sprintf("Hello, user %v! This is %v's page.", role, userUri))
 }
+
+func HealthCheckHandler(c echo.Context) error {
+	return c.String(http.StatusOK, "OK")
+}

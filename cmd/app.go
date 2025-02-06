@@ -66,6 +66,7 @@ func main() {
 	}
 
 	e.GET("/public", handler.PublicHandler)
+	e.GET("/health", handler.HealthCheckHandler)
 
 	fgaGroup := e.Group("/page", middleware.Authorization(authConfig))
 	fgaGroup.GET("/:page-uri", handler.PageHandler)
